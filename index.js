@@ -45,7 +45,6 @@ client.on("messageCreate", function(message) {
           });
         sampleWayne += gptResponse.data.choices[0].text + "\n";
         message.reply(`${gptResponse.data.choices[0].text.substring(8)}`);
-        console.log(sampleWayne);
     })();
 });
 
