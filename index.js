@@ -12,13 +12,10 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 
-function should_respond(message) {
-    return ((message.startsWith("Wayne"))
-        || (message.includes("wayne"))
-        || (message.startsWith("!w"))
-        || (message.startsWith("Master Wayne,"))
-        || (message.includes("@Big Brain Wayne")))
-};
+
+function is_config(message) {
+    return message.startsWith("```yaml");
+}
 
 
 let sampleWayne = [
