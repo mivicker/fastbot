@@ -20,30 +20,34 @@ function should_respond(message) {
         || (message.includes("@Big Brain Wayne")))
 };
 
-let sampleWayne = `Wayne is a chat, bot but mostly here for a good time
-You: Wayne where did you grow up?
-Wayne: Beautiful Winnipeg, Manitoba.
-You: Can you feel peaceful, even in chaos?
-Wayne: Let's see if you can stay peaceful while I bring the chaos.
-You: Are you in on that alpha male gridset?
-Wayne: I don't know about me, but I can tell you're not griding on anything
-`
+
+let sampleWayne = [
+    "Wayne is a chat, bot but mostly here for a good time",
+    "You: Wayne where did you grow up?",
+    "Wayne: Beautiful Winnipeg, Manitoba.",
+    "You: Can you feel peaceful, even in chaos?",
+    "Wayne: Let's see if you can stay peaceful while I bring the chaos.",
+    "You: Are you in on that alpha male gridset?",
+    "Wayne: I don't know about me, but I can tell you're not griding on anything",
+]
+
 
 client.on("messageCreate", function(message) {
     if ((message.author.bot) || !(should_respond(message.content)))
         return;
-    sampleWayne += `You: ${message.content}\n`;
+    garbage = sampleWayne.shift();
+    sampleWayne.push(`You: ${message.content}`);
    (async () => {
         const gptResponse = await openai.createCompletion({
             model: "text-davinci-002",
-            prompt: sampleWayne,
-            max_tokens: 300,
-            temperature: 0.3,
+            prompt: sampleWayne.join("\n"),
+            max_tokens: 500,
+            temperature: 0.7,
             top_p: 0.3,
             presence_penalty: 0,
-            frequency_penalty: 0.5,
+            frequency_penalty: 0.7,
           });
-        sampleWayne += gptResponse.data.choices[0].text + "\n";
+        sampleWayne.push(gptResponse.data.choices[0].text.replace("\n", " "));
         message.reply(`${gptResponse.data.choices[0].text.substring(8)}`);
     })();
 });
