@@ -48,7 +48,7 @@ client.on("messageCreate", function(message) {
             frequency_penalty: 0.7,
           });
         sampleWayne.push(gptResponse.data.choices[0].text.replace("\n", " "));
-        message.reply(`${gptResponse.data.choices[0].text.substring(8)}`);
+        message.reply(`${gptResponse.data.choices[0].text}`);
     })();
 });
 
