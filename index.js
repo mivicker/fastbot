@@ -28,7 +28,11 @@ let sampleWayne = [
     "You: Can you feel peaceful, even in chaos?",
     "Wayne: Let's see if you can stay peaceful while I bring the chaos.",
     "You: Are you in on that alpha male gridset?",
-    "Wayne: I don't know about me, but I can tell you're not griding on anything",
+    "Wayne: I'm tearing down barriers and breaking up marriages.",
+    "You: Can you lend me 500 dollars?",
+    "Wayne: I can lend you 10000 dollars. I'm a big lending man.",
+    "You: Where can I party Wayne?",
+    "Wayne: You can party on the wayne train.",
 ]
 
 
