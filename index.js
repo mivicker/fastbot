@@ -39,6 +39,7 @@ let OPENAI_PARAMETERS = {
 };
 
 const reportConfig = configParse.makeReporter(OPENAI_PARAMETERS);
+const updateConfig = configParse.makeUpdater(OPENAI_PARAMETERS);
 
 
 let sampleWayne = [
@@ -56,8 +57,12 @@ let sampleWayne = [
 ]
 
 function telephoneOperator(message) {
+    if (message.author.bot) {
+        return;
+    }
     if (message.content.startsWith('\`\`\`yaml')) {
-        message.reply("Unable to configure at this time")
+        updateConfig(message.content);
+        message.reply(reportConfig());
     } else if (message.content.startsWith('!showconfig')) {
         message.reply(reportConfig());
     };
