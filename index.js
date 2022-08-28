@@ -1,7 +1,10 @@
 require('dotenv').config();
+require('./configparse.mjs');
+require('./wayneprompts.mjs');
+
 const { Client, GatewayIntentBits } = require('discord.js');
 const client = new Client({ intents: [
-    GatewayIntentBits.Guilds,
+    GatewayIntentBits.Guild,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
 ] });
@@ -12,10 +15,35 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 
+// These will trigger a response if placed at the beginning of the message
+let START_KEYWORDS = ["Wayne"]
 
-function is_config(message) {
-    return message.startsWith("```yaml");
+// These will trigger if placed anywhere in a message
+let INCLUDE_KEYWORDS = []
+
+// These hold the special keyword actions
+let CONFIG_KEYWORDS = {
+    '!addsummons': '',
+    '!removesummons': '',
+    '!showconfig': '',
+    '\`\`\`yaml': '',
 }
+
+// This includes the configuration available to the chat
+let OPENAI_PARAMETERS = {
+            model: "text-davinci-002",
+            prompt: sampleWayne.join("\n"),
+            max_tokens: 500,
+            temperature: 0.7,
+            top_p: 0.3,
+            presence_penalty: 0,
+            frequency_penalty: 0.7,
+};
+
+
+const botRespondsTo = makeResponseEvaluator(START_KEYWORDS, INCLUDE_KEYWORDS);
+const addTrigger = makeTriggerAdder(START_KEYWORDS, INCLUDE_KEYWORDS);
+const removeTrigger = makeTriggerRemover(START_KEYWORDS, INCLUDE_KEYWORDS);
 
 
 let sampleWayne = [
@@ -39,19 +67,10 @@ client.on("messageCreate", function(message) {
     garbage = sampleWayne.shift();
     sampleWayne.push(`You: ${message.content}`);
    (async () => {
-        const gptResponse = await openai.createCompletion({
-            model: "text-davinci-002",
-            prompt: sampleWayne.join("\n"),
-            max_tokens: 500,
-            temperature: 0.7,
-            top_p: 0.3,
-            presence_penalty: 0,
-            frequency_penalty: 0.7,
-          });
+        const gptResponse = await openai.createCompletion(OPENAI_PARAMETERS);
         sampleWayne.push(gptResponse.data.choices[0].text.replace("\n", " "));
         message.reply(`${gptResponse.data.choices[0].text}`);
     })();
 });
 
 client.login(process.env.BOT_TOKEN);
-
