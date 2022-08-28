@@ -1,38 +1,31 @@
 require('dotenv').config();
-require('./configparse.mjs');
-require('./wayneprompts.mjs');
-
+//
 // TODO: run some kind of loop so if wayne hasn't been talked to
 // in a while, he will read an article at random from wikipedia or 
 // something and talk about it.
 
+const configParse = require('./configparse.js');
+
 const { Client, GatewayIntentBits } = require('discord.js');
 const client = new Client({ intents: [
-    GatewayIntentBits.Guild,
+    GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
 ] });
+
+/*
 const { Configuration, OpenAIApi } = require("openai");
-const { makeReporter } = require('./configparse.mjs');
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
-
+*/
 
 // These will trigger a response if placed at the beginning of the message
 let START_KEYWORDS = ["Wayne"]
 
 // These will trigger if placed anywhere in a message
 let INCLUDE_KEYWORDS = []
-
-// These hold the special keyword actions
-let CONFIG_KEYWORDS = {
-    '!addsummons': '',
-    '!removesummons': '',
-    '!showconfig': '',
-    '\`\`\`yaml': '',
-}
 
 // This includes the configuration available to the chat
 let OPENAI_PARAMETERS = {
@@ -45,11 +38,7 @@ let OPENAI_PARAMETERS = {
             frequency_penalty: 0.7,
 };
 
-const reportConfig = makeReporter(OPENAI_PARAMETERS);
-
-const shouldRespondTo = makeResponseEvaluator(START_KEYWORDS, INCLUDE_KEYWORDS);
-const addTrigger = makeTriggerAdder(START_KEYWORDS, INCLUDE_KEYWORDS);
-const removeTrigger = makeTriggerRemover(START_KEYWORDS, INCLUDE_KEYWORDS);
+const reportConfig = configParse.makeReporter(OPENAI_PARAMETERS);
 
 
 let sampleWayne = [
@@ -66,15 +55,15 @@ let sampleWayne = [
     "Wayne: You can party on the wayne train.",
 ]
 
-function telephoneOperator(message, client) {
-    if (message.startsWith('\`\`\`yaml')) {
-        client.message.send("Unable to configure at this time")
-    } else if (message.startsWith('!showconfig')) {
-        client.message.send(reportConfig());
+function telephoneOperator(message) {
+    if (message.content.startsWith('\`\`\`yaml')) {
+        message.reply("Unable to configure at this time")
+    } else if (message.content.startsWith('!showconfig')) {
+        message.reply(reportConfig());
     };
 }
 
-client.on("messageCreate", telephoneOperator(message, client));
+client.on("messageCreate", telephoneOperator);
 
 /*
 client.on("messageCreate", function(message) {
@@ -89,4 +78,5 @@ client.on("messageCreate", function(message) {
     })();
 });
 */
+
 client.login(process.env.BOT_TOKEN);
