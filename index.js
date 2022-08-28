@@ -32,7 +32,7 @@ let CONFIG_KEYWORDS = {
 // This includes the configuration available to the chat
 let OPENAI_PARAMETERS = {
             model: "text-davinci-002",
-            prompt: sampleWayne.join("\n"),
+//            prompt: sampleWayne.join("\n"),
             max_tokens: 500,
             temperature: 0.7,
             top_p: 0.3,
