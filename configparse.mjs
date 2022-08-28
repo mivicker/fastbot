@@ -1,5 +1,9 @@
-let zeroToOne = (num) => (0 <= num) & (num <= 1);
-let zeroToFourK = (num) => (0 <= num) & (num <= 1);
+const yaml = import("js-yaml");
+
+let zeroToOne = (num) => (0 <= num) && (num <= 1);
+let zeroToFourK = (num) => (0 <= num) && (num <= 4000);
+
+// TODO: warn user of invalid input
 
 const openAIChecks = {
     max_tokens: zeroToFourK,
@@ -9,7 +13,6 @@ const openAIChecks = {
     frequency_penalty: zeroToOne,
 };
 
-const yaml = require("js-yaml");
 
 /**
  * strips the formatting ticks from a discord yaml block
@@ -32,18 +35,17 @@ function prepConfig(message) {
 };
 
 function validateConfig(configObj) {
-    result = {};
-    for (key of Object.keys(configObj)) {
+    const result = {};
+    for (let key of Object.keys(configObj)) {
         if (key in openAIChecks) {
             const checker = openAIChecks[key];
-            if (checker(configObj)) {
+            if (checker(configObj[key])) {
                 result[key] = configObj[key];
             };
         };
     };
+    return result;
 };
-
-
 
 
 /**
@@ -54,8 +56,8 @@ function validateConfig(configObj) {
 export function makeUpdater(object) {
     return function updateObject(updates) {
         validated = validateConfig(updates);
-        for (key of Object.keys(object)) {
-            if (key in prepConfig(validated)) {
+        for (let key of Object.keys(object)) {
+            if (key in validated) {
                 object[key] = validated[key]
             };
         };

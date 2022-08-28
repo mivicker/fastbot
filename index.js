@@ -2,6 +2,10 @@ require('dotenv').config();
 require('./configparse.mjs');
 require('./wayneprompts.mjs');
 
+// TODO: run some kind of loop so if wayne hasn't been talked to
+// in a while, he will read an article at random from wikipedia or 
+// something and talk about it.
+
 const { Client, GatewayIntentBits } = require('discord.js');
 const client = new Client({ intents: [
     GatewayIntentBits.Guild,
@@ -9,6 +13,7 @@ const client = new Client({ intents: [
     GatewayIntentBits.MessageContent,
 ] });
 const { Configuration, OpenAIApi } = require("openai");
+const { makeReporter } = require('./configparse.mjs');
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
 });
@@ -40,8 +45,9 @@ let OPENAI_PARAMETERS = {
             frequency_penalty: 0.7,
 };
 
+const reportConfig = makeReporter(OPENAI_PARAMETERS);
 
-const botRespondsTo = makeResponseEvaluator(START_KEYWORDS, INCLUDE_KEYWORDS);
+const shouldRespondTo = makeResponseEvaluator(START_KEYWORDS, INCLUDE_KEYWORDS);
 const addTrigger = makeTriggerAdder(START_KEYWORDS, INCLUDE_KEYWORDS);
 const removeTrigger = makeTriggerRemover(START_KEYWORDS, INCLUDE_KEYWORDS);
 
@@ -60,9 +66,19 @@ let sampleWayne = [
     "Wayne: You can party on the wayne train.",
 ]
 
+function telephoneOperator(message, client) {
+    if (message.startsWith('\`\`\`yaml')) {
+        client.message.send("Unable to configure at this time")
+    } else if (message.startsWith('!showconfig')) {
+        client.message.send(reportConfig());
+    };
+}
 
+client.on("messageCreate", telephoneOperator(message, client));
+
+/*
 client.on("messageCreate", function(message) {
-    if ((message.author.bot) || !(should_respond(message.content)))
+    if ((message.author.bot) || !(shouldRespondTo(message.content)))
         return;
     garbage = sampleWayne.shift();
     sampleWayne.push(`You: ${message.content}`);
@@ -72,5 +88,5 @@ client.on("messageCreate", function(message) {
         message.reply(`${gptResponse.data.choices[0].text}`);
     })();
 });
-
+*/
 client.login(process.env.BOT_TOKEN);
