@@ -1,4 +1,5 @@
 require('dotenv').config();
+const clone = require('clone');
 
 const winston = require('winston');
 
@@ -83,7 +84,7 @@ client.on('messageCreate', function (message) {
         sampleWayne.push(`You: ${message.content}`);
        (async () => {
 
-            const parameters = structuredClone(OPENAI_PARAMETERS);
+            const parameters = clone(OPENAI_PARAMETERS);
             parameters.prompt = sampleWayne.join("\n");
 
             const gptResponse = await openai.createCompletion(parameters);
