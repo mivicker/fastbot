@@ -12,7 +12,7 @@ const logger = winston.createLogger({
 // TODO: run some kind of loop so if wayne hasn't been talked to
 // in a while, he will read an article at random from wikipedia or 
 // something and talk about it.
-
+// TODO: change length of history array depending on length of responses. 
 
 const configParse = require('./configparse.js');
 const waynesFilter = require('./wayneprompts.js');
@@ -83,8 +83,8 @@ client.on('messageCreate', function (message) {
         sampleWayne.push(`You: ${message.content}`);
        (async () => {
 
-            parameters = structuredClone(OPENAI_PARAMETERS);
-            parameters.prompt= sampleWayne.join("\n");
+            const parameters = structuredClone(OPENAI_PARAMETERS);
+            parameters.prompt = sampleWayne.join("\n");
 
             const gptResponse = await openai.createCompletion(parameters);
             sampleWayne.push(gptResponse.data.choices[0].text.replace("\n", " "));
