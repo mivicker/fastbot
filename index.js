@@ -83,10 +83,8 @@ client.on('messageCreate', function (message) {
         sampleWayne.push(`You: ${message.content}`);
        (async () => {
 
-            parameters = {
-                ...OPENAI_PARAMETERS,
-                prompt: sampleWayne.join("\n")
-            };
+            parameters = structuredClone(OPENAI_PARAMETERS);
+            parameters.prompt= sampleWayne.join("\n");
 
             const gptResponse = await openai.createCompletion(parameters);
             sampleWayne.push(gptResponse.data.choices[0].text.replace("\n", " "));
