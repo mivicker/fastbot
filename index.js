@@ -1,10 +1,21 @@
 require('dotenv').config();
-//
+
+const winston = require('winston');
+
+const logger = winston.createLogger({
+    level: 'info',
+    transports: [
+        new winston.transports.File({ filename: 'rememberances.log' })
+    ],
+});
+
 // TODO: run some kind of loop so if wayne hasn't been talked to
 // in a while, he will read an article at random from wikipedia or 
 // something and talk about it.
 
+
 const configParse = require('./configparse.js');
+const waynesFilter = require('./wayneprompts.js');
 
 const { Client, GatewayIntentBits } = require('discord.js');
 const client = new Client({ intents: [
@@ -13,24 +24,22 @@ const client = new Client({ intents: [
     GatewayIntentBits.MessageContent,
 ] });
 
-/*
+
 const { Configuration, OpenAIApi } = require("openai");
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
-*/
 
 // These will trigger a response if placed at the beginning of the message
-let START_KEYWORDS = ["Wayne"]
+let START_KEYWORDS = ["Wayne", "wayne"]
 
 // These will trigger if placed anywhere in a message
-let INCLUDE_KEYWORDS = []
+let INCLUDE_KEYWORDS = ["Wayne", "wayne"]
 
 // This includes the configuration available to the chat
 let OPENAI_PARAMETERS = {
             model: "text-davinci-002",
-//            prompt: sampleWayne.join("\n"),
             max_tokens: 500,
             temperature: 0.7,
             top_p: 0.3,
@@ -41,6 +50,10 @@ let OPENAI_PARAMETERS = {
 const reportConfig = configParse.makeReporter(OPENAI_PARAMETERS);
 const updateConfig = configParse.makeUpdater(OPENAI_PARAMETERS);
 
+const shouldRespondTo = waynesFilter.makeResponseEvaluator(
+    START_KEYWORDS,
+    INCLUDE_KEYWORDS,
+);
 
 let sampleWayne = [
     "Wayne is a chat, bot but mostly here for a good time",
@@ -56,7 +69,7 @@ let sampleWayne = [
     "Wayne: You can party on the wayne train.",
 ]
 
-function telephoneOperator(message) {
+client.on('messageCreate', function (message) {
     if (message.author.bot) {
         return;
     }
@@ -65,23 +78,24 @@ function telephoneOperator(message) {
         message.reply(reportConfig());
     } else if (message.content.startsWith('!showconfig')) {
         message.reply(reportConfig());
-    };
-}
+    } else if (shouldRespondTo(message.content)) {
+        garbage = sampleWayne.shift();
+        sampleWayne.push(`You: ${message.content}`);
+       (async () => {
 
-client.on("messageCreate", telephoneOperator);
+            parameters = OPENAI_PARAMETERS;
+            parameters['prompt'] = sampleWayne.join("\n");
 
-/*
-client.on("messageCreate", function(message) {
-    if ((message.author.bot) || !(shouldRespondTo(message.content)))
-        return;
-    garbage = sampleWayne.shift();
-    sampleWayne.push(`You: ${message.content}`);
-   (async () => {
-        const gptResponse = await openai.createCompletion(OPENAI_PARAMETERS);
-        sampleWayne.push(gptResponse.data.choices[0].text.replace("\n", " "));
-        message.reply(`${gptResponse.data.choices[0].text}`);
+            const gptResponse = await openai.createCompletion(parameters);
+            sampleWayne.push(gptResponse.data.choices[0].text.replace("\n", " "));
+            message.reply(`${gptResponse.data.choices[0].text}`);
+            logger.log({
+                level: 'info',
+                user: message.author.username,
+                message: `ME:${message.content}\nYOU:${gptResponse.data.choices[0].text}`
+            });
     })();
+    };
 });
-*/
 
 client.login(process.env.BOT_TOKEN);

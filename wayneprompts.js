@@ -11,7 +11,7 @@ function any(conditions) {
 };
 
 
-export function makeResponseEvaluator(startKeywords, includeKeywords) {
+function makeResponseEvaluator(startKeywords, includeKeywords) {
     return (function shouldRespond(message) {
         return (
             any(startKeywords.map(kw => message.startsWith(kw)))
@@ -21,7 +21,7 @@ export function makeResponseEvaluator(startKeywords, includeKeywords) {
 };
 
 
-export function makeTriggerAdder(startKeywords, includeKeywords) {
+function makeTriggerAdder(startKeywords, includeKeywords) {
     return (function (keyword, placement) {
         if (placement === "start") {
             startKeywords.push(keyword);
@@ -40,7 +40,7 @@ function removeKeyword(activeKeywords, keyword) {
 };
 
 
-export function makeTriggerRemover (startKeywords, includeKeywords) {
+function makeTriggerRemover (startKeywords, includeKeywords) {
     return (function (keyword, placement) {
         if (placement === "start") {
             removeKeyword(startKeywords, keyword);
@@ -49,3 +49,7 @@ export function makeTriggerRemover (startKeywords, includeKeywords) {
         };
     });
 };
+
+exports.makeResponseEvaluator = makeResponseEvaluator
+exports.makeTriggerAdder = makeTriggerAdder
+exports.makeTriggerRemover = makeTriggerRemover
