@@ -42,8 +42,9 @@ let INCLUDE_KEYWORDS = ["Wayne", "wayne"]
 let OPENAI_PARAMETERS = {
             model: "text-davinci-002",
             max_tokens: 500,
-            temperature: 0.7,
-            top_p: 0.3,
+            n: 1,
+            temperature: 0.9,
+            top_p: 0,
             presence_penalty: 0,
             frequency_penalty: 0.7,
 };
@@ -55,20 +56,24 @@ const shouldRespondTo = waynesFilter.makeResponseEvaluator(
     START_KEYWORDS,
     INCLUDE_KEYWORDS,
 );
+jokerfiedWayne`
+Wayne is a chat bot that has been jokerfied.
+You: What?                                                   
+Wayne: Remember the other day when I told you about my stand-up comedy. Well, I'm doing a set next Thursday and I'm inviting a bunch of my friends and I was wondering if maybe you wanted to come and check it out.
+You: Why were you fired?
+Wayne: They said I wasn't funny.
+You: Let's see one more. I love this guy.
+Wayne: It's funny, when I was a little boy and told people I wanted to be a comedian, everyone laughed at me. (opens his arms like a big shot) Well no one is laughing now.
+You: No. It was definitely you, buddy. You're the guy who couldn't stop laughing. Murray killed you. More laughter. Joker looks up at them.
+Wayne: If I were you, I'd walk away from this table before I strangle all three of you with that fucking stethoscope hanging from your neck.
+You: Couple rules though,-- No cussing, no off-color material, we do a clean show, okay? You'll be on after Dr. Sally. Someone will come and get you. Good?
+Wayne: Hey Murray,-- one small thing? When you bring me out, can you introduce me as "The Joker"?
+Wayne: I want to get it right. Knock knock. 
+You: Who's there?
+Wayne: It's the police, ma'am. Your son has been hit by a drunk driver. He's dead.
+`
 
-let sampleWayne = [
-    "Wayne is a chat, bot but mostly here for a good time",
-    "You: Wayne where did you grow up?",
-    "Wayne: Beautiful Winnipeg, Manitoba.",
-    "You: Can you feel peaceful, even in chaos?",
-    "Wayne: Let's see if you can stay peaceful while I bring the chaos.",
-    "You: Are you in on that alpha male gridset?",
-    "Wayne: I'm tearing down barriers and breaking up marriages.",
-    "You: Can you lend me 500 dollars?",
-    "Wayne: I can lend you 10000 dollars. I'm a big lending man.",
-    "You: Where can I party Wayne?",
-    "Wayne: You can party on the wayne train.",
-]
+let sampleWayne = []
 
 client.on('messageCreate', function (message) {
     if (message.author.bot) {
@@ -80,12 +85,17 @@ client.on('messageCreate', function (message) {
     } else if (message.content.startsWith('!showconfig')) {
         message.reply(reportConfig());
     } else if (shouldRespondTo(message.content)) {
-        garbage = sampleWayne.shift();
+
+        if (sampleWayne.length() > 6) {
+            garbage = sampleWayne.shift();
+        };
+
         sampleWayne.push(`You: ${message.content}`);
        (async () => {
 
             const parameters = clone(OPENAI_PARAMETERS);
-            parameters.prompt = sampleWayne.join("\n");
+
+            parameters.prompt = jokerfiedWayne + sampleWayne.join("\n");
 
             const gptResponse = await openai.createCompletion(parameters);
             sampleWayne.push(gptResponse.data.choices[0].text.replace("\n", " "));
