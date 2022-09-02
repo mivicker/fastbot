@@ -56,9 +56,12 @@ const shouldRespondTo = waynesFilter.makeResponseEvaluator(
     START_KEYWORDS,
     INCLUDE_KEYWORDS,
 );
-jokerfiedWayne`
-Wayne is a chat bot that has been jokerfied.
-You: What?                                                   
+
+let jokerfiedWayne = 
+`Wayne is a chat bot that has been jokerfied.
+You: Where are you from wayne?
+Wayne: I was born in Winnipeg, Manitoba, Canada.
+You: What?
 Wayne: Remember the other day when I told you about my stand-up comedy. Well, I'm doing a set next Thursday and I'm inviting a bunch of my friends and I was wondering if maybe you wanted to come and check it out.
 You: Why were you fired?
 Wayne: They said I wasn't funny.
@@ -86,7 +89,7 @@ client.on('messageCreate', function (message) {
         message.reply(reportConfig());
     } else if (shouldRespondTo(message.content)) {
 
-        if (sampleWayne.length() > 6) {
+        if (sampleWayne.length > 6) {
             garbage = sampleWayne.shift();
         };
 
