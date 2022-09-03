@@ -57,40 +57,43 @@ const shouldRespondTo = waynesFilter.makeResponseEvaluator(
     INCLUDE_KEYWORDS,
 );
 
-let jokerfiedWayne = 
-`Wayne is a chat bot that has been jokerfied.
-You: Where are you from wayne?
-I was born in Winnipeg, Manitoba, Canada.
-You: What?
-Remember the other day when I told you about my stand-up comedy. Well, I'm doing a set next Thursday and I'm inviting a bunch of my friends and I was wondering if maybe you wanted to come and check it out.
-You: Why were you fired?
-They said I wasn't funny.
-You: Let's see one more. I love this guy.
-It's funny, when I was a little boy and told people I wanted to be a comedian, everyone laughed at me. (opens his arms like a big shot) Well no one is laughing now.
-You: No. It was definitely you, buddy. You're the guy who couldn't stop laughing. Murray killed you. More laughter. Joker looks up at them.
-If I were you, I'd walk away from this table before I strangle all three of you with that fucking stethoscope hanging from your neck.
-You: Couple rules though,-- No cussing, no off-color material, we do a clean show, okay? You'll be on after Dr. Sally. Someone will come and get you. Good?
-Hey Murray,-- one small thing? When you bring me out, can you introduce me as "The Joker"?
-I want to get it right. Knock knock. 
-You: Who's there?
-It's the police, ma'am. Your son has been hit by a drunk driver. He's dead.
-`
+let summaryWayne = "Wayne is a wild child chat bot from manitoba."
+let primedWayne = [
+    "You: What is the square root of 4?",
+    "Wayne: Wow, I mean I might know, but damn this is really stressing me out.",
+    "You: Can you please think carefully about this and give me an answer?",
+    "Wayne: uhhhh oh boy, oh boy.",
+    "You: The square root of four is one of the easy ones, wayne.",
+    "Wayne: okay, okay, okay, not thee, no thats nine, not 1 because that's just one. TWO its TWO!",
+]
 
 let sampleWayne = []
 
 client.on('messageCreate', function (message) {
     if (message.author.bot) {
         return;
-    }
-    if (message.content.startsWith('\`\`\`yaml')) {
+    } else if (message.content.startsWith('\`\`\`yaml')) {
         updateConfig(message.content);
-        message.reply(reportConfig());
+        message.reply(reportConfig());y
     } else if (message.content.startsWith('!showconfig')) {
         message.reply(reportConfig());
+    } else if (message.content.startsWith('!showintro')) {
+        message.reply(summaryWayne);
+    } else if (message.content.startsWith('!updateintro')) {
+        summaryWayne = message.content.slice(11);
+        message.reply("Wayne's bio updated.");
+    } else if (message.content.startsWith('!showmem')) {
+        if (sampleWayne.length === 0) {
+            message.reply("Wayne's head is empty")
+        } else {
+            message.reply(sampleWayne.join("\n"));
+        };
+    } else if (message.content.startsWith('!forget')) {
+        sampleWayne = [];
+        message.reply("Wayne has forgotten everything.");
     } else if (shouldRespondTo(message.content)) {
-
-        if (sampleWayne.length > 6) {
-            garbage = sampleWayne.shift();
+        if (sampleWayne.length > 12) {
+            sampleWayne.shift();
         };
 
         sampleWayne.push(`You: ${message.content}`);
@@ -98,7 +101,7 @@ client.on('messageCreate', function (message) {
 
             const parameters = clone(OPENAI_PARAMETERS);
 
-            parameters.prompt = jokerfiedWayne + sampleWayne.join("\n");
+            parameters.prompt = primedWayne.join("\n") + sampleWayne.join("\n");
 
             const gptResponse = await openai.createCompletion(parameters);
             sampleWayne.push(gptResponse.data.choices[0].text.replace("\n", " "));
