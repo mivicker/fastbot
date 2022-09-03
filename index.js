@@ -74,7 +74,7 @@ client.on('messageCreate', function (message) {
         return;
     } else if (message.content.startsWith('\`\`\`yaml')) {
         updateConfig(message.content);
-        message.reply(reportConfig());y
+        message.reply(reportConfig());
     } else if (message.content.startsWith('!showconfig')) {
         message.reply(reportConfig());
     } else if (message.content.startsWith('!showintro')) {
