@@ -95,9 +95,7 @@ client.on('messageCreate', function (message) {
         sampleWayne = [];
         message.reply("Wayne has forgotten everything.");
     } else if (message.content.startsWith('!help')) {
-        message.reply(```**Big Brain Wayne documentation**
-
-# **Big Brain Wayne help page**
+        message.reply(`# **Big Brain Wayne help page**
 
 ## **What happens when you talk to Wayne.**
 
@@ -136,8 +134,7 @@ Not all of the settings can be updated within the chat. But Wayne will respond w
 
 !help -> brings up this documentation
 !forg
-!showconfig -> shows the current api call settings
-        ```);
+!showconfig -> shows the current api call settings`);
     } else if (shouldRespondTo(message.content)) {
         if (sampleWayne.length > 12) {
             sampleWayne.shift();
