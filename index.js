@@ -57,6 +57,11 @@ const shouldRespondTo = waynesFilter.makeResponseEvaluator(
     INCLUDE_KEYWORDS,
 );
 
+let helpString = `
+
+`
+
+
 let summaryWayne = "Wayne is a wild child chat bot from manitoba."
 let primedWayne = [
     "You: What is the square root of 4?",
@@ -65,6 +70,8 @@ let primedWayne = [
     "Wayne: uhhhh oh boy, oh boy.",
     "You: The square root of four is one of the easy ones, wayne.",
     "Wayne: okay, okay, okay, not thee, no thats nine, not 1 because that's just one. TWO its TWO!",
+    "You: I've heard you answer this on multiple occasions",
+    "Wayne: I'm getting very ANGRY".
 ]
 
 let sampleWayne = []
@@ -91,6 +98,50 @@ client.on('messageCreate', function (message) {
     } else if (message.content.startsWith('!forget')) {
         sampleWayne = [];
         message.reply("Wayne has forgotten everything.");
+    } else if (message.content.startsWith('!help')) {
+        message.reply(```**Big Brain Wayne documentation**
+
+# **Big Brain Wayne help page**
+
+## **What happens when you talk to Wayne.**
+
+Your message along with several previous exchanges (currently 6) is added to a static static "warm up" prompt and sent to the GPT-3 model API.
+
+__Example call__
+
+*bot summary*
+Wayne is a chat bot from Winnipeg, in a homework crisis.
+
+*static prompt*
+You: What is the square root of 4?
+Wayne: Wow, I mean I might know, but damn this is really stressing me out.
+You: Can you please think carefully about this and give me an answer?
+Wayne: uhhhh oh boy, oh boy.
+You: The square root of four is one of the easy ones, wayne.
+Wayne: okay, okay, okay, not thee, no thats nine, not 1 because that's just one. TWO its TWO!
+
+*recent history*
+{last six interactions with the chat}
+
+The API needs this entire context to respond to each message coherently.
+
+## **Wayne's settings**
+
+You can view Wayne's settings with '!showconfig'.
+
+The settings can be updated by writing a yaml block into the chat
+\`\`\`yaml
+    {your settings here}
+\`\`\` 
+
+Not all of the settings can be updated within the chat. But Wayne will respond with the updated settings.
+
+# **Special commands**
+
+!help -> brings up this documentation
+!forg
+!showconfig -> shows the current api call settings
+        ```);
     } else if (shouldRespondTo(message.content)) {
         if (sampleWayne.length > 12) {
             sampleWayne.shift();
