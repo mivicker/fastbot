@@ -124,9 +124,9 @@ The API needs this entire context to respond to each message coherently.
 You can view Wayne's settings with '!showconfig'.
 
 The settings can be updated by writing a yaml block into the chat
-\`\`\`yaml
+\\\`\\\`\\\`yaml
     {your settings here}
-\`\`\` 
+\\\`\\\`\\\` 
 
 Not all of the settings can be updated within the chat. But Wayne will respond with the updated settings.
 
