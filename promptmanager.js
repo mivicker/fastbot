@@ -11,7 +11,7 @@ function lengthAdjuster(chats, n_tokens) {
         if ((tokens_used + estimateTokens(chat)) > n_tokens) {
             return result;
         };
-        result.push(chat);
+        result.unshift(chat);
         tokens_used += estimateTokens(chat);
     };
     return result;
