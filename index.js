@@ -153,12 +153,16 @@ Not all of the settings can be updated within the chat. But Wayne will respond w
             parameters.prompt = primedWayne.join("\n") + sampleWayne.join("\n");
 
             const gptResponse = await openai.createCompletion(parameters);
-            sampleWayne.push(gptResponse.data.choices[0].text.replace("\n", " "));
-            message.reply(`${gptResponse.data.choices[0].text}`);
+            let reply = gptResponse.data.choices[0].text;
+            if (reply.length === 0) {
+                reply = "💀";
+            };
+            sampleWayne.push(reply.replace("\n", " "));
+            message.reply(`${reply}`);
             logger.log({
                 level: 'info',
                 user: message.author.username,
-                message: `ME:${message.content}\nYOU:${gptResponse.data.choices[0].text}`
+                message: `ME:${message.content}\nYOU:${reply}`
             });
     })();
     };
