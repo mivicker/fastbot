@@ -1,4 +1,6 @@
 require('dotenv').config();
+
+
 const clone = require('clone');
 
 const winston = require('winston');
@@ -13,10 +15,12 @@ const logger = winston.createLogger({
 // TODO: run some kind of loop so if wayne hasn't been talked to
 // in a while, he will read an article at random from wikipedia or 
 // something and talk about it.
-// TODO: change length of history array depending on length of responses. 
+
+// TODO: Have wayne only respond in his channel.
 
 const configParse = require('./configparse.js');
 const waynesFilter = require('./wayneprompts.js');
+const promptManager = require('./promptmanager.js');
 
 const { Client, GatewayIntentBits } = require('discord.js');
 const client = new Client({ intents: [
@@ -24,7 +28,6 @@ const client = new Client({ intents: [
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
 ] });
-
 
 const { Configuration, OpenAIApi } = require("openai");
 const configuration = new Configuration({
@@ -136,11 +139,13 @@ Not all of the settings can be updated within the chat. But Wayne will respond w
 !forg
 !showconfig -> shows the current api call settings`);
     } else if (shouldRespondTo(message.content)) {
-        if (sampleWayne.length > 12) {
-            sampleWayne.shift();
-        };
-
         sampleWayne.push(`You: ${message.content}`);
+        sampleWayne = promptManager.lengthAdjuster(
+            sampleWayne, 
+            promptManager.budgetTokens(
+                summaryWayne, primedWayne, OPENAI_PARAMETERS["max_tokens"]
+            )
+        );
        (async () => {
 
             const parameters = clone(OPENAI_PARAMETERS);
@@ -160,3 +165,4 @@ Not all of the settings can be updated within the chat. But Wayne will respond w
 });
 
 client.login(process.env.BOT_TOKEN);
+
