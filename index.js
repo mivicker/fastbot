@@ -162,7 +162,9 @@ Not all of the settings can be updated within the chat. But Wayne will respond w
             logger.log({
                 level: 'info',
                 user: message.author.username,
-                message: `ME:${message.content}\nYOU:${reply}`
+                message: `ME:${message.content}\nYOU:${reply}`,
+                channel: message.channel,
+                channel_id: message.channelId,
             });
     })();
     };
