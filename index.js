@@ -142,9 +142,9 @@ Not all of the settings can be updated within the chat. But Wayne will respond w
         sampleWayne.push(`You: ${message.content}`);
         sampleWayne = promptManager.lengthAdjuster(
             sampleWayne, 
-            promptManager.budgetTokens(
+            (promptManager.budgetTokens(
                 summaryWayne, primedWayne, OPENAI_PARAMETERS["max_tokens"]
-            )
+            ) - 500)
         );
        (async () => {
 
