@@ -69,8 +69,6 @@ let primedWayne = [
     "Wayne: uhhhh oh boy, oh boy.",
     "You: The square root of four is one of the easy ones, wayne.",
     "Wayne: okay, okay, okay, not thee, no thats nine, not 1 because that's just one. TWO its TWO!",
-    "You: I've heard you answer this on multiple occasions",
-    "Wayne: I'm getting very ANGRY"
 ]
 
 let sampleWayne = []
