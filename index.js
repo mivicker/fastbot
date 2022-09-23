@@ -61,14 +61,8 @@ const shouldRespondTo = waynesFilter.makeResponseEvaluator(
 );
 
 
-let summaryWayne = "Wayne is a wild child chat bot from manitoba."
+let summaryWayne = "Please list every person mentioned in this paragraph."
 let primedWayne = [
-    "You: What is the square root of 4?",
-    "Wayne: Wow, I mean I might know, but damn this is really stressing me out.",
-    "You: Can you please think carefully about this and give me an answer?",
-    "Wayne: uhhhh oh boy, oh boy.",
-    "You: The square root of four is one of the easy ones, wayne.",
-    "Wayne: okay, okay, okay, not thee, no thats nine, not 1 because that's just one. TWO its TWO!",
 ]
 
 let sampleWayne = []
@@ -137,7 +131,7 @@ Not all of the settings can be updated within the chat. But Wayne will respond w
 !forg
 !showconfig -> shows the current api call settings`);
     } else if (shouldRespondTo(message.content)) {
-        sampleWayne.push(`You: ${message.content}`);
+        sampleWayne.push(`You: ${message.content}`); // add this so string, then push later to avoid 
         sampleWayne = promptManager.lengthAdjuster(
             sampleWayne, 
             (promptManager.budgetTokens(
